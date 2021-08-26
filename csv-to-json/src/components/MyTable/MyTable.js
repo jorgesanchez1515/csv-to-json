@@ -35,6 +35,9 @@ const MyTable = (props) => {
 				throw new Error()
 
 
+			// Si la tarea se ha cumplido correctamente 
+			// podemos borrar al usuario de la tabla
+
 			const users = json.data
 			const index = users.indexOf(user)
 			users.splice(index, 1)

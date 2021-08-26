@@ -9,6 +9,18 @@ const App = () => {
 
 	const [json, setJson] = useState(null)
 
+
+	const createJson = (file) => {
+		// Recibe un archivo csv y lo convierte en string
+		// El string lo pasa a la funcion stringToJson()
+
+		const reader = new FileReader()
+		
+		reader.readAsText(file)
+
+		reader.onload = () => stringToJson(reader.result)
+	}
+
 	const stringToJson = (text) => {
 		
 		// Array con cada fila del csv
@@ -18,22 +30,26 @@ const App = () => {
 
 		// Array con cada elemento de la primera fila
 
-		let keys = []
-		keys = lines.shift().split(";")
-		keys = keys.map(key => key.replaceAll(' ',  ''))
-		keys = keys.filter(key => key !== '')
+		let keys = lines.shift().split(';')						// Separamos los elementos por ';'
+		keys = keys.map(val => val.replaceAll(' ',  ''))		// Borramos los espacios en blanco.
+		keys = keys.filter(val => val !== '')					// Eliminamos los elementos vacios.
 
+		
 		// Matriz de los datos
 
-		let data = []
-		data = lines.map(elem => elem.split(";"))
-		data = data.map(elem => elem = elem.map(val => val.replaceAll(' ',  '')))
-		data = data.filter(elem => elem.reduce((total = false, val) => total || val !== ''))
+		let data = lines.map(elem => elem.split(';'))
+		
+		data = data.map(elem => 
+			elem.map(val => val.replaceAll(' ',  ''))
+		)
+
+		data = data.filter(elem => 								// Eliminamos los elementos que
+			elem.reduce((total, val) => total + val)			// tienen todos sus campos vacios.
+		)
 
 
-		// Recorremos la matriz por filas usando un map() 
-		// para convertir cada fila en un objeto
-		// Cada objeto tendra las keys de la primera fila
+		// Recorremos la matriz por filas para convertir cada fila en un objeto.
+		// Cada objeto tendra las keys de la primera fila.
 
 		const objects = data.map(elem => zipObject(keys, elem))
 
@@ -43,13 +59,6 @@ const App = () => {
 		})
 	}
 
-	const createJson = (file) => {
-		const reader = new FileReader()
-		
-		reader.readAsText(file)
-
-		reader.onload = () => stringToJson(reader.result)
-	}
 
 	return (
 		<div className="App">
